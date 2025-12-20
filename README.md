@@ -37,6 +37,15 @@ This project uses the [UCI Bike Sharing Dataset](https://archive.ics.uci.edu/dat
 │   └── 04_failure_modes.ipynb     # 2x2 matrix & recommendations
 ├── src/
 │   └── data.py                    # Data loading, PSI computation, drift injection
+├── web/                           # Interactive Next.js web application
+│   ├── src/
+│   │   ├── app/                   # Pages: home, /explainer, /simulator
+│   │   ├── components/            # React components with D3 visualizations
+│   │   ├── lib/                   # PSI computation & drift injection (TypeScript)
+│   │   ├── data/                  # Pre-processed bike-sharing.json dataset
+│   │   └── styles/                # Tailwind CSS configuration
+│   ├── public/                    # Static assets (favicon, patterns)
+│   └── package.json
 ├── requirements.txt
 └── README.md
 ```
@@ -67,6 +76,8 @@ This project uses the [UCI Bike Sharing Dataset](https://archive.ics.uci.edu/dat
 
 ## Setup
 
+### Python Analysis (Notebooks)
+
 ```bash
 # Create virtual environment
 python -m venv .venv
@@ -78,6 +89,45 @@ pip install -r requirements.txt
 # Run notebooks
 jupyter lab
 ```
+
+### Web Interface
+
+The `/web` folder contains an interactive Next.js application for exploring drift detection concepts without needing to run notebooks.
+
+```bash
+# Navigate to web folder
+cd web
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Open http://localhost:3000 in your browser
+```
+
+**Available pages:**
+- **Home** (`/`) — Landing page with detection matrix overview and key statistics
+- **Explainer** (`/explainer`) — Interactive step-by-step guide covering PSI, the 2×2 detection matrix, and real-world failure modes
+- **Simulator** (`/simulator`) — Hands-on tool to inject drift (sudden, gradual, or noise) and observe PSI changes in real-time
+
+## Web Interface Features
+
+**Technology Stack:**
+- **Frontend**: Next.js 16 with TypeScript and Tailwind CSS
+- **Data Visualization**: D3.js for interactive charts and Framer Motion for smooth animations
+- **PSI Implementation**: Full TypeScript port of the Python algorithm for browser-based computation
+- **Deployment**: Optimized for Vercel serverless hosting
+
+**Interactive Visualizations:**
+- **Animated Histograms** — Compare 2011 and 2012 feature distributions with D3 bar charts
+- **PSI Gauge** — Real-time semi-circular gauge showing drift severity with threshold indicators
+- **Detection Matrix** — Interactive 2×2 matrix exploring all four drift scenarios (true positive, false positive, false negative, true negative)
+- **Drift Simulator** — Inject controlled drift into features and observe how PSI responds, with intensity sliders and drift type selection
+- **Time Series Charts** — Visualize feature trends and PSI evolution over time
+
+The web interface makes these concepts accessible without requiring Python knowledge or notebook infrastructure—perfect for sharing with stakeholders or teaching.
 
 ## 🎯 Key Findings
 
@@ -120,6 +170,8 @@ This project demonstrates:
 - Synthetic drift scenarios are simplified approximations of real-world failures
 - PSI thresholds (0.1, 0.2) are rules of thumb, not universal constants
 - Ground truth labels available immediately (unrealistic in production scenarios)
+- Web interface operates on a static data snapshot (2011 and 2012 only) — models are not retrained dynamically
+- PSI alone cannot distinguish between data drift and concept drift; must be combined with performance metrics
 
 ## What This Demonstrates
 
@@ -131,4 +183,5 @@ This project demonstrates:
 - Being intellectually honest about limitations and failure modes
 
 ## References
+
 [1] Fanaee-T, Hadi, and Gama, Joao, "Event labeling combining ensemble detectors and background knowledge", Progress in Artificial Intelligence (2013): pp. 1-15, Springer Berlin Heidelberg, doi:10.1007/s13748-013-0040-3.
