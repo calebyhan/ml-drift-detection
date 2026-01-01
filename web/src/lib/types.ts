@@ -48,6 +48,8 @@ export interface DetectionMatrixCell {
   label: string;
   description: string;
   color: string;
+  textColor: string;
+  descColor: string;
 }
 
 export interface HistogramBin {

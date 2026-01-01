@@ -11,11 +11,11 @@ interface PSIGaugeProps {
 export function PSIGauge({ value, label, size = 120 }: PSIGaugeProps) {
   // PSI thresholds
   const thresholds = { stable: 0.1, moderate: 0.2, max: 0.5 };
-  
+
   // Clamp value for display
   const displayValue = Math.min(value, thresholds.max);
   const percentage = (displayValue / thresholds.max) * 100;
-  
+
   // Determine color based on thresholds
   let color = '#22c55e'; // green for stable
   let status = 'Stable';
@@ -26,13 +26,13 @@ export function PSIGauge({ value, label, size = 120 }: PSIGaugeProps) {
     color = '#eab308'; // yellow for moderate
     status = 'Moderate';
   }
-  
+
   // Arc calculations
   const strokeWidth = 10;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * Math.PI; // Half circle
   const offset = circumference - (percentage / 100) * circumference;
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
@@ -48,7 +48,7 @@ export function PSIGauge({ value, label, size = 120 }: PSIGaugeProps) {
           strokeWidth={strokeWidth}
           strokeLinecap="round"
         />
-        
+
         {/* Threshold markers */}
         {[thresholds.stable, thresholds.moderate].map((threshold, idx) => {
           const angle = Math.PI * (1 - threshold / thresholds.max);
@@ -68,7 +68,7 @@ export function PSIGauge({ value, label, size = 120 }: PSIGaugeProps) {
             </g>
           );
         })}
-        
+
         {/* Value arc */}
         <motion.path
           d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
@@ -81,7 +81,7 @@ export function PSIGauge({ value, label, size = 120 }: PSIGaugeProps) {
           animate={{ strokeDashoffset: offset }}
           transition={{ duration: 1, ease: 'easeOut' }}
         />
-        
+
         {/* Center text */}
         <text
           x={size / 2}
@@ -102,7 +102,7 @@ export function PSIGauge({ value, label, size = 120 }: PSIGaugeProps) {
           PSI
         </text>
       </svg>
-      
+
       <div className="text-center mt-1">
         <div className="text-sm font-medium text-gray-800">{label}</div>
         <motion.div

@@ -5,58 +5,148 @@ import { DriftSimulator } from '@/components/DriftSimulator';
 
 export default function SimulatorPage() {
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-6 py-3 flex justify-between items-center">
-          <Link href="/" className="text-gray-500 hover:text-gray-900 text-sm">
-            ← Back
-          </Link>
-          <span className="text-sm text-gray-600">Simulator</span>
-          <Link href="/explainer" className="text-gray-500 hover:text-gray-900 text-sm">
-            Explainer
-          </Link>
-        </div>
-      </nav>
-
+    <div style={{ backgroundColor: 'var(--background)', minHeight: 'calc(100vh - 200px)' }}>
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <p className="text-gray-600 text-sm">
-            Inject drift into the 2012 data and observe how PSI responds.
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Header Section */}
+        <div
+          className="rounded-2xl shadow-lg p-6 sm:p-8 mb-8"
+          style={{
+            backgroundColor: 'var(--surface)',
+            border: '1px solid var(--border)'
+          }}
+        >
+          <div className="flex items-start gap-4">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: 'rgba(59, 130, 246, 0.15)' }}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 12h8m4 0h6M3 6h8m4 0h6M3 18h8m4 0h6"
+                  stroke="var(--accent)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold mb-2" style={{ color: 'var(--text)' }}>
+                Interactive Drift Simulator
+              </h1>
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                Inject different types of drift into the 2012 data and observe how PSI responds in real-time.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Simulator Component */}
+        <DriftSimulator />
+
+        {/* Drift Type Explanations */}
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-6" style={{ color: 'var(--text)' }}>
+            Types of Drift
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <div
+              className="rounded-2xl shadow-lg p-6"
+              style={{
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)'
+              }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                />
+                <h3 className="font-bold" style={{ color: 'var(--text)' }}>
+                  Gradual Drift
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                Cumulative bias over time. Common in sensor calibration drift or seasonal changes.
+              </p>
+            </div>
+
+            <div
+              className="rounded-2xl shadow-lg p-6"
+              style={{
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)'
+              }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                />
+                <h3 className="font-bold" style={{ color: 'var(--text)' }}>
+                  Sudden Shift
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                Abrupt change at a specific point. Often caused by new deployments or system updates.
+              </p>
+            </div>
+
+            <div
+              className="rounded-2xl shadow-lg p-6"
+              style={{
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)'
+              }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                />
+                <h3 className="font-bold" style={{ color: 'var(--text)' }}>
+                  Random Noise
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                Gaussian noise on all values. Indicates data quality issues or measurement errors.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Note */}
+        <div
+          className="mt-8 rounded-xl p-5 border-l-4"
+          style={{
+            backgroundColor: 'var(--surface)',
+            borderColor: 'var(--accent)',
+            border: '1px solid var(--border)',
+            borderLeftWidth: '4px',
+            borderLeftColor: 'var(--accent)'
+          }}
+        >
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            <strong style={{ color: 'var(--text)' }}>Note:</strong> The same drift amount affects features differently depending on their
+            distribution width. A 0.15 shift in temperature has a different impact than a 0.15 shift in humidity.
           </p>
         </div>
 
-        <DriftSimulator />
-
-        {/* Info cards */}
-        <div className="grid md:grid-cols-3 gap-4 mt-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm font-medium text-gray-800 mb-1">Gradual drift</p>
-            <p className="text-gray-500 text-xs">
-              Cumulative bias over time. Sensor calibration, seasonal changes.
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm font-medium text-gray-800 mb-1">Sudden shift</p>
-            <p className="text-gray-500 text-xs">
-              Abrupt change at a point. New deployment, system updates.
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm font-medium text-gray-800 mb-1">Random noise</p>
-            <p className="text-gray-500 text-xs">
-              Gaussian noise on all values. Data quality issues.
-            </p>
-          </div>
+        {/* CTA */}
+        <div className="mt-8 text-center">
+          <Link href="/explainer">
+            <button className="px-8 py-3.5 rounded-lg font-medium transition-all shadow-lg hover:shadow-xl hover:scale-105" style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}>
+              Learn about drift detection
+            </button>
+          </Link>
         </div>
-
-        {/* Note */}
-        <p className="mt-6 text-xs text-gray-500">
-          The same drift amount affects features differently depending on their 
-          distribution width.
-        </p>
       </div>
-    </main>
+    </div>
   );
 }

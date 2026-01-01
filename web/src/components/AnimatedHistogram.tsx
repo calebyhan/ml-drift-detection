@@ -25,7 +25,7 @@ export function AnimatedHistogram({
   animationDuration = 750,
 }: AnimatedHistogramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const margin = { top: 30, right: 30, bottom: 40, left: 50 };
+  const margin = { top: 20, right: 40, bottom: 40, left: 60 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -46,7 +46,7 @@ export function AnimatedHistogram({
     // Normalize to proportions
     const refTotal = referenceData.length;
     const curTotal = currentData.length;
-    
+
     const refProportions = refBins.map(b => b.length / refTotal);
     const curProportions = curBins.map(b => b.length / curTotal);
 
@@ -64,18 +64,42 @@ export function AnimatedHistogram({
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Add axes
-    g.append('g')
-      .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale).ticks(5))
-      .attr('class', 'text-gray-600');
+    // Get CSS variable values
+    const root = document.documentElement;
+    const style = getComputedStyle(root);
+    const textSecondary = style.getPropertyValue('--text-secondary').trim() || '#64748b';
+    const borderColor = style.getPropertyValue('--border').trim() || '#e2e8f0';
 
-    g.append('g')
-      .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => `${(d as number * 100).toFixed(0)}%`))
-      .attr('class', 'text-gray-600');
+    // Add axes with proper styling
+    const xAxis = g.append('g')
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(xScale).ticks(5));
+
+    xAxis.selectAll('text')
+      .attr('fill', textSecondary)
+      .style('font-size', '12px');
+
+    xAxis.selectAll('line')
+      .attr('stroke', borderColor);
+
+    xAxis.select('.domain')
+      .attr('stroke', borderColor);
+
+    const yAxis = g.append('g')
+      .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => `${(d as number * 100).toFixed(0)}%`));
+
+    yAxis.selectAll('text')
+      .attr('fill', textSecondary)
+      .style('font-size', '12px');
+
+    yAxis.selectAll('line')
+      .attr('stroke', borderColor);
+
+    yAxis.select('.domain')
+      .attr('stroke', borderColor);
 
     // Bar width
-    const barWidth = innerWidth / (bins.length - 1) / 2 - 2;
+    const barWidth = innerWidth / (bins.length - 1) / 2.5 - 3;
 
     // Reference bars (blue)
     g.selectAll('.ref-bar')
@@ -83,7 +107,10 @@ export function AnimatedHistogram({
       .enter()
       .append('rect')
       .attr('class', 'ref-bar')
-      .attr('x', (d) => xScale(d.x0!) - barWidth)
+      .attr('x', (d) => {
+        const binCenter = (d.x0! + d.x1!) / 2;
+        return xScale(binCenter) - barWidth - 2;
+      })
       .attr('width', barWidth)
       .attr('y', innerHeight)
       .attr('height', 0)
@@ -100,7 +127,10 @@ export function AnimatedHistogram({
       .enter()
       .append('rect')
       .attr('class', 'cur-bar')
-      .attr('x', (d) => xScale(d.x0!))
+      .attr('x', (d) => {
+        const binCenter = (d.x0! + d.x1!) / 2;
+        return xScale(binCenter) + 2;
+      })
       .attr('width', barWidth)
       .attr('y', innerHeight)
       .attr('height', 0)
@@ -112,28 +142,47 @@ export function AnimatedHistogram({
       .attr('y', (_, i) => yScale(curProportions[i]))
       .attr('height', (_, i) => innerHeight - yScale(curProportions[i]));
 
-    // Title
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', 16)
-      .attr('text-anchor', 'middle')
-      .attr('class', 'text-sm font-medium fill-gray-800')
-      .text(title);
-
-  }, [referenceData, currentData, bins, width, height, innerWidth, innerHeight, margin, animationDuration, title]);
+  }, [referenceData, currentData, bins, width, height, innerWidth, innerHeight, margin, animationDuration]);
 
   return (
-    <div className="bg-gray-50 rounded p-4">
-      <svg ref={svgRef} width={width} height={height} />
+    <div
+      className="rounded-xl p-6"
+      style={{
+        backgroundColor: 'var(--background)',
+        border: '1px solid var(--border)'
+      }}
+    >
+      <h4 className="text-sm font-semibold mb-4 text-center" style={{ color: 'var(--text)' }}>
+        {title}
+      </h4>
+      <div className="flex justify-center">
+        <svg ref={svgRef} width={width} height={height} />
+      </div>
       {showLegend && (
-        <div className="flex justify-center gap-4 mt-2 text-xs text-gray-500">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 bg-blue-500 rounded-sm opacity-70" />
-            <span>2011</span>
+        <div className="flex justify-center gap-6 mt-4">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-4 h-4 rounded"
+              style={{
+                backgroundColor: 'rgb(59, 130, 246)',
+                opacity: 0.8
+              }}
+            />
+            <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+              2011 (Training)
+            </span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 bg-orange-500 rounded-sm opacity-70" />
-            <span>2012</span>
+          <div className="flex items-center gap-2.5">
+            <div
+              className="w-4 h-4 rounded"
+              style={{
+                backgroundColor: 'rgb(249, 115, 22)',
+                opacity: 0.8
+              }}
+            />
+            <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+              2012 (Current)
+            </span>
           </div>
         </div>
       )}
